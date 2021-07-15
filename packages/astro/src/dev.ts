@@ -1,12 +1,12 @@
 import type { AstroConfig } from './@types/astro';
-import type { LogOptions } from './logger.js';
+import type { LogOptions } from './@types/logger';
 
 import { green } from 'kleur/colors';
 import http from 'http';
 import path from 'path';
 import { performance } from 'perf_hooks';
 import { defaultLogDestination, defaultLogLevel, debug, error, info, parseError } from './logger.js';
-import { createRuntime } from './runtime.js';
+import { createRuntime } from './runtime/index.js';
 import { stopTimer } from './build/util.js';
 
 const hostname = '127.0.0.1';

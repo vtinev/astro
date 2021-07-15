@@ -4,7 +4,7 @@ import type { CompileOptions } from '../@types/compiler.js';
 import path from 'path';
 import { MarkdownRenderingOptions, renderMarkdownWithFrontmatter } from '@astrojs/markdown-support';
 
-import { parse } from '@astrojs/parser';
+import parse from '@astrojs/parser';
 import { transform } from './transform/index.js';
 import { codegen } from './codegen/index.js';
 

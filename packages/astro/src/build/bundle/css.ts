@@ -1,5 +1,5 @@
 import type { AstroConfig, BuildOutput, BundleMap } from '../../@types/astro';
-import type { LogOptions } from '../../logger.js';
+import type { LogOptions } from '../../@types/logger';
 
 import { performance } from 'perf_hooks';
 import shorthash from 'shorthash';

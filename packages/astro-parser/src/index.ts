@@ -1,3 +1,5 @@
-export * from './interfaces';
-export * from './parse/utils/features';
-export { default as parse } from './parse/index.js';
+export * from './interfaces.js';
+export * from './parse/utils/features.js';
+import parse from './parse/index.js';
+export { parse };
+export default parse;

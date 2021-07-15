@@ -1,6 +1,6 @@
 import type { InputOptions, OutputOptions, OutputChunk } from 'rollup';
 import type { BuildOutput } from '../../@types/astro';
-import type { AstroRuntime } from '../../runtime';
+import type { AstroRuntime } from '../../@types/runtime';
 
 import { fileURLToPath } from 'url';
 import { rollup } from 'rollup';

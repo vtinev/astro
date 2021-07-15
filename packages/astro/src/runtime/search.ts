@@ -1,23 +1,15 @@
-import type { AstroConfig } from './@types/astro';
+import type { AstroConfig } from '../@types/astro';
 import { existsSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import glob from 'tiny-glob/sync.js';
 
-interface PageLocation {
-  fileURL: URL;
-  snowpackURL: string;
-}
 /** findAnyPage and return the _astro candidate for snowpack */
-function findAnyPage(candidates: Array<string>, astroConfig: AstroConfig): PageLocation | false {
+function findAnyPage(candidates: Array<string>, astroConfig: AstroConfig): URL | false {
   for (let candidate of candidates) {
     const url = new URL(`./${candidate}`, astroConfig.pages);
     if (existsSync(url)) {
-      const pagesPath = astroConfig.pages.pathname.replace(astroConfig.projectRoot.pathname, '');
-      return {
-        fileURL: url,
-        snowpackURL: `/_astro/${pagesPath}${candidate}.js`,
-      };
+      return url;
     }
   }
   return false;
@@ -26,7 +18,7 @@ function findAnyPage(candidates: Array<string>, astroConfig: AstroConfig): PageL
 type SearchResult =
   | {
       statusCode: 200;
-      location: PageLocation;
+      location: URL;
       pathname: string;
       currentPage?: number;
     }
@@ -96,10 +88,7 @@ export function searchForPage(url: URL, astroConfig: AstroConfig): SearchResult 
   if (reqPath === '/500') {
     return {
       statusCode: 200,
-      location: {
-        fileURL: new URL('./frontend/500.astro', import.meta.url),
-        snowpackURL: `/_astro_frontend/500.astro.js`,
-      },
+      location: new URL('./frontend/500.astro', import.meta.url),
       pathname: reqPath,
     };
   }
@@ -110,7 +99,7 @@ export function searchForPage(url: URL, astroConfig: AstroConfig): SearchResult 
 }
 
 /** load a collection route */
-function loadCollection(url: string, astroConfig: AstroConfig): { currentPage?: number; location: PageLocation } | undefined {
+function loadCollection(url: string, astroConfig: AstroConfig): { currentPage?: number; location: URL } | undefined {
   const pages = glob('**/$*.astro', { cwd: fileURLToPath(astroConfig.pages), filesOnly: true });
   for (const pageURL of pages) {
     const reqURL = new RegExp('^/' + pageURL.replace(/\$([^/]+)\.astro/, '$1') + '(?:/(.*)|/?$)');
@@ -128,10 +117,7 @@ function loadCollection(url: string, astroConfig: AstroConfig): { currentPage?: 
       }
       const pagesPath = astroConfig.pages.pathname.replace(astroConfig.projectRoot.pathname, '');
       return {
-        location: {
-          fileURL: new URL(`./${pageURL}`, astroConfig.pages),
-          snowpackURL: `/_astro/${pagesPath}${pageURL}.js`,
-        },
+        location: new URL(`./${pageURL}`, astroConfig.pages),
         currentPage,
       };
     }

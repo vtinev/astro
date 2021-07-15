@@ -1,9 +1,9 @@
-import type { LogOptions } from '../logger';
-import type { AstroConfig, RuntimeMode } from './astro';
+import type { AstroConfig } from './astro';
+import type { LogOptions } from './logger';
+import type { RuntimeMode } from './runtime';
 
 export interface CompileOptions {
   logging: LogOptions;
-  resolvePackageUrl: (p: string) => Promise<string>;
   astroConfig: AstroConfig;
   hmrPort?: number;
   mode: RuntimeMode;

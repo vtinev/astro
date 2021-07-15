@@ -3,13 +3,13 @@ import type { CompileOptions } from '../../@types/compiler';
 import type { AstroConfig, AstroMarkdownOptions, TransformResult, ComponentInfo, Components } from '../../@types/astro';
 import type { ImportDeclaration, ExportNamedDeclaration, VariableDeclarator, Identifier, ImportDefaultSpecifier } from '@babel/types';
 
-import eslexer from 'es-module-lexer';
-import esbuild from 'esbuild';
+import * as eslexer from 'es-module-lexer';
+import * as esbuild from 'esbuild';
 import path from 'path';
-import astroParser from '@astrojs/parser';
+import parse, { FEATURE_CUSTOM_ELEMENT } from '@astrojs/parser';
 import { walk, asyncWalk } from 'estree-walker';
-import _babelGenerator from '@babel/generator';
-import babelParser from '@babel/parser';
+import _babelGenerator, { GeneratorResult } from '@babel/generator';
+import * as babelParser from '@babel/parser';
 import { codeFrameColumns } from '@babel/code-frame';
 import * as babelTraverse from '@babel/traverse';
 import { error, warn, parseError } from '../../logger.js';
@@ -23,11 +23,10 @@ import { nodeBuiltinsSet } from '../../node_builtins.js';
 import { readFileSync } from 'fs';
 import { pathToFileURL } from 'url';
 
-const { parse, FEATURE_CUSTOM_ELEMENT } = astroParser;
+const babelGenerator: typeof _babelGenerator = (_babelGenerator as any).default;
 const traverse: typeof babelTraverse.default = (babelTraverse.default as any).default;
 
 // @ts-ignore
-const babelGenerator: typeof _babelGenerator = _babelGenerator.default;
 const { transformSync } = esbuild;
 
 interface Attribute {
@@ -180,7 +179,7 @@ interface GetComponentWrapperOptions {
 const PlainExtensions = new Set(['.js', '.jsx', '.ts', '.tsx']);
 /** Generate Astro-friendly component import */
 function getComponentWrapper(_name: string, hydration: HydrationAttributes, { url, importSpecifier }: ComponentInfo, opts: GetComponentWrapperOptions) {
-  const { astroConfig, filename } = opts;
+  const { astroConfig, compileOptions, filename } = opts;
 
   let name = _name;
   let method = hydration.method;
@@ -191,7 +190,6 @@ function getComponentWrapper(_name: string, hydration: HydrationAttributes, { ur
     name = legacyName;
     method = legacyMethod as HydrationAttributes['method'];
 
-    const { compileOptions, filename } = opts;
     const shortname = path.posix.relative(compileOptions.astroConfig.projectRoot.pathname, filename);
     warn(compileOptions.logging, shortname, yellow(`Deprecation warning: Partial hydration now uses a directive syntax. Please update to "<${name} client:${method} />"`));
   }
@@ -223,7 +221,7 @@ function getComponentWrapper(_name: string, hydration: HydrationAttributes, { ur
       }
     };
 
-    let metadata: string = '';
+    let metadata = '';
     if (method) {
       const componentUrl = getComponentUrl(astroConfig, url, pathToFileURL(filename));
       const componentExport = getComponentExport();
@@ -548,8 +546,8 @@ async function compileHtml(enterNode: TemplateNode, state: CodegenState, compile
 
       // 1. Parse
       const ast = parse(rendered);
-      // 2. Transform the AST
 
+      // 2. Transform the AST
       await transform(ast, {
         compileOptions,
         filename,

@@ -1,9 +1,9 @@
 import type { BuildOutput, BundleMap } from '../@types/astro';
-import type { LogOptions } from '../logger';
+import type { LogOptions } from '../@types/logger';
 
-import { info, table } from '../logger.js';
-import { underline, bold } from 'kleur/colors';
 import gzipSize from 'gzip-size';
+import { underline, bold } from 'kleur/colors';
+import { info, table } from '../logger.js';
 
 interface BundleStats {
   size: number;

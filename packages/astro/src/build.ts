@@ -1,11 +1,12 @@
-import type { AstroConfig, BundleMap, BuildOutput, RuntimeMode, PageDependencies } from './@types/astro';
-import type { LogOptions } from './logger';
+import type { AstroConfig, BundleMap, BuildOutput, PageDependencies } from './@types/astro';
+import type { RuntimeMode } from './@types/runtime';
+import type { LogOptions } from './@types/logger';
 
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { performance } from 'perf_hooks';
-import eslexer from 'es-module-lexer';
+import * as eslexer from 'es-module-lexer';
 import cheerio from 'cheerio';
 import del from 'del';
 import { bold, green, yellow, red, dim, underline } from 'kleur/colors';
@@ -18,7 +19,7 @@ import { generateSitemap } from './build/sitemap.js';
 import { logURLStats, collectBundleStats, mapBundleStatsToURLStats } from './build/stats.js';
 import { getDistPath, stopTimer } from './build/util.js';
 import { debug, defaultLogDestination, defaultLogLevel, error, info, warn } from './logger.js';
-import { createRuntime } from './runtime.js';
+import { createRuntime } from './runtime/index.js';
 
 const defaultLogging: LogOptions = {
   level: defaultLogLevel,
@@ -59,7 +60,7 @@ export async function build(astroConfig: AstroConfig, logging: LogOptions = defa
   const mode: RuntimeMode = 'production';
   const runtime = await createRuntime(astroConfig, { mode, logging: runtimeLogging });
   const { runtimeConfig } = runtime;
-  const { snowpack } = runtimeConfig;
+  const { viteServer } = runtimeConfig;
 
   try {
     // 0. erase build directory
@@ -82,7 +83,6 @@ export async function build(astroConfig: AstroConfig, logging: LogOptions = defa
             filepath,
             logging,
             mode,
-            resolvePackageUrl: (pkgName: string) => snowpack.getUrlForPackage(pkgName),
             runtime,
             site: astroConfig.buildOptions.site,
           });

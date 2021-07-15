@@ -1,4 +1,6 @@
 import type { CompileError } from '@astrojs/parser';
+import type { LoggerLevel, LogMessage, LogOptions } from './@types/logger';
+
 import { bold, blue, red, grey, underline, yellow } from 'kleur/colors';
 import { Writable } from 'stream';
 import { format as utilFormat } from 'util';
@@ -35,29 +37,10 @@ export const defaultLogDestination = new Writable({
   },
 });
 
-interface LogWritable<T> extends Writable {
-  write: (chunk: T) => boolean;
-}
-
-export type LoggerLevel = 'debug' | 'info' | 'warn' | 'error' | 'silent'; // same as Pino
-export type LoggerEvent = 'debug' | 'info' | 'warn' | 'error';
-
-export interface LogOptions {
-  dest: LogWritable<LogMessage>;
-  level: LoggerLevel;
-}
-
 export const defaultLogOptions: LogOptions = {
   dest: defaultLogDestination,
   level: 'info',
 };
-
-export interface LogMessage {
-  type: string | null;
-  level: LoggerLevel;
-  message: string;
-  args: Array<any>;
-}
 
 const levels: Record<LoggerLevel, number> = {
   debug: 20,

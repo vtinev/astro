@@ -1,5 +1,5 @@
-import type { ImportSpecifier, ImportDefaultSpecifier, ImportNamespaceSpecifier } from '@babel/types';
 import type { AstroMarkdownOptions } from '@astrojs/markdown-support';
+import type { ImportSpecifier, ImportDefaultSpecifier, ImportNamespaceSpecifier } from '@babel/types';
 
 export interface AstroConfigRaw {
   dist: string;
@@ -70,8 +70,6 @@ export interface CompileResult {
   contents: string;
   css?: string;
 }
-
-export type RuntimeMode = 'development' | 'production';
 
 export type Params = Record<string, string | number>;
 
@@ -193,4 +191,20 @@ export interface Renderer {
   renderToStaticMarkup: AsyncRendererComponentFn<{
     html: string;
   }>;
+}
+
+export interface RenderOptions {
+  request: {
+    url: URL;
+    canonicalURL: URL;
+  };
+  children: any[];
+  props: Record<string, any>;
+  css: string[];
+}
+
+export interface SSRModule {
+  css?: string | string[];
+  createCollection(): Promise<CreateCollection>;
+  render(options: RenderOptions): Promise<string>;
 }

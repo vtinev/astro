@@ -4,7 +4,8 @@
     "emitDeclarationOnly": true,
     "strict": true,
     "moduleResolution": "node",
-    "esModuleInterop": true,
+    "esModuleInterop": false, // setting this to "false" is necessary to expose CJS <> ESM interop issues (do what TS says)
+    "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   }

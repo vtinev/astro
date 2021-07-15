@@ -1,5 +1,6 @@
-import type { TransformOptions, Transformer } from '../../@types/transformer';
 import type { TemplateNode } from '@astrojs/parser';
+import type { TransformOptions, Transformer } from '../../@types/transformer';
+import type { LogOptions } from '../../@types/logger';
 
 import crypto from 'crypto';
 import { createRequire } from 'module';
@@ -9,7 +10,7 @@ import postcss, { Plugin } from 'postcss';
 import postcssKeyframes from 'postcss-icss-keyframes';
 import findUp from 'find-up';
 import sass from 'sass';
-import { error, LogOptions } from '../../logger.js';
+import { error } from '../../logger.js';
 import astroScopedStyles, { NEVER_SCOPED_TAGS } from './postcss-scoped-styles/index.js';
 import slash from 'slash';
 

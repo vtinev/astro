@@ -1,5 +1,5 @@
 import type { SourceMap } from 'magic-string';
-export { CompileError } from './utils/error';
+export { CompileError } from './utils/error.js';
 
 export interface BaseNode {
   start: number;
