@@ -3,7 +3,6 @@ import type { AstroRuntime, LoadResult, RuntimeConfig, RuntimeOptions } from '..
 
 import { CompileError } from '@astrojs/parser';
 import fs from 'fs';
-import mime from 'mime';
 import { fileURLToPath } from 'url';
 import { posix as path } from 'path';
 import { performance } from 'perf_hooks';
@@ -15,9 +14,6 @@ import { ASTRO_FRONTEND, loadFrontendFile } from './frontend.js';
 import { CJS_EXTERNALS, ESM_EXTERNALS } from './modules.js';
 import { searchForPage } from './search.js';
 import astro from './vite_plugin.js';
-
-const ASTRO_SRC_REGEX = /^\/_astro\//; // RegEx needed to test for user code
-let VITE_CLIENT_PORT: number;
 
 // info needed for collection generatio
 /** Pass a URL to Astro to resolve and build */
@@ -40,39 +36,8 @@ async function load(config: RuntimeConfig, rawPathname: string | undefined): Pro
   // Astro pages
   const searchResult = searchForPage(fullurl, config.astroConfig);
   if (searchResult.statusCode === 404) {
-    try {
-      // User code
-      const srcURL = reqPath.replace(ASTRO_SRC_REGEX, '/');
-      const _todo_delete_this = new Set<string>([
-        srcURL,
-        srcURL.replace(/\.js$/, '.jsx'),
-        srcURL.replace(/\.js$/, '.ts'),
-        srcURL.replace(/\.js$/, '.tsx'),
-        srcURL.replace(/\.js$/, '.vue'),
-        srcURL.replace(/\.js$/, '.svelte'),
-      ]); // TODO: remove this gigantic, stupid hack that just guesses at random URLs
-      for (const possibleURL of _todo_delete_this.values()) {
-        const result = await viteServer.transformRequest(possibleURL);
-        console.log({ possibleURL, result });
-        if (result) {
-          // success
-          return {
-            statusCode: 200,
-            contents: result ? (result as any).code || result : '',
-            contentType: mime.getType(srcURL) || false,
-          };
-        }
-      }
-      throw new Error(`Unable to load ${reqPath}`);
-    } catch (err) {
-      // build error
-      if (err.failed) {
-        return { statusCode: 500, type: 'unknown', error: err };
-      }
-
-      // not found
-      return { statusCode: 404, error: err };
-    }
+    // not found
+    return { statusCode: 404, error: new Error(`Not found: ${reqPath}`) };
   }
 
   // redirect
@@ -216,7 +181,6 @@ async function load(config: RuntimeConfig, rawPathname: string | undefined): Pro
       props: Object.keys(collection).length > 0 ? { collection } : {},
       css: Array.isArray(mod.css) ? mod.css : typeof mod.css === 'string' ? [mod.css] : [],
     });
-    html = html.replace(/<\/body><\/html>$/, `<script type="module" src="http://localhost:${VITE_CLIENT_PORT}/@vite/client"></script></body></html>`);
 
     return {
       statusCode: 200,
@@ -303,8 +267,13 @@ export async function createRuntime(astroConfig: AstroConfig, { mode, logging }:
   const [viteServer] = await Promise.all<vite.ViteDevServer>([
     // Vite Server
     vite.createServer({
+      cacheDir: 'node_modules/.vite-ssr',
       logLevel: 'error',
       mode,
+      optimizeDeps: {
+        entries: ['**/*'],
+        include: ['react', 'react-dom'],
+      },
       publicDir: fileURLToPath(astroConfig.public),
       root: fileURLToPath(astroConfig.projectRoot),
       server: { middlewareMode: 'ssr' },

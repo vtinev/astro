@@ -30,6 +30,7 @@ export const CJS_EXTERNALS = new Set([
   'find-up',
   'mime',
   'min-indent',
+  'node-fetch',
   'postcss',
   'postcss-icss-keyframes',
   'react',

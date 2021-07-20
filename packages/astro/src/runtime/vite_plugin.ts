@@ -47,8 +47,9 @@ export default function astro(compileOptions: CompileOptions): Plugin {
           })
         );
         code.push(`const renderers = [`);
-        renderers.forEach((_, n) => {
-          code.push(`  { source: '', renderer: __renderer_${n}, polyfills: [], hydrationPolyfills: [] },`);
+        renderers.forEach((moduleName, n) => {
+          let viteName = moduleName.replace('@astrojs/', '@astrojs_') + '_client.js';
+          code.push(`  { source: '/node_modules/.vite/${viteName}', renderer: __renderer_${n}, polyfills: [], hydrationPolyfills: [] },`);
         });
         code.push(`];`);
         code.push(`export default renderers;`);

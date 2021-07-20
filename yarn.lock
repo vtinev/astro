@@ -2252,7 +2252,7 @@ astring@^1.7.4:
   version "0.0.1"
   dependencies:
     arg "^5.0.0"
-    esbuild "^0.11.16"
+    esbuild "^0.12.15"
     globby "^11.0.3"
     tar "^6.1.0"
 
@@ -4206,11 +4206,6 @@ es6-promise@^4.1.0:
   version "4.2.8"
   resolved "https://registry.npmjs.org/es6-promise/-/es6-promise-4.2.8.tgz"
   integrity sha512-HJDGx5daxeIvxdBxvG2cb9g4tEvwIk3i8+nhX0yGrYmZUzbkdg8QbDevheDB8gd0//uPj4c1EQua8Q+MViT0/w==
-
-esbuild@^0.11.16, esbuild@^0.11.17:
-  version "0.11.23"
-  resolved "https://registry.npmjs.org/esbuild/-/esbuild-0.11.23.tgz"
-  integrity sha512-iaiZZ9vUF5wJV8ob1tl+5aJTrwDczlvGP0JoMmnpC2B0ppiMCu8n8gmy5ZTGl5bcG081XBVn+U+jP+mPFm5T5Q==
 
 esbuild@^0.12.15, esbuild@^0.12.8:
   version "0.12.15"
