@@ -191,6 +191,7 @@ pre > code:not([class*='language']) {
   margin: 0;
   border-radius: 0;
   color: inherit;
+  box-shadow: none;
 }
 
 table,
@@ -204,8 +205,7 @@ pre {
   margin-right: calc(var(--padding-inline) * -1);
   font-family: var(--font-mono);
 
-  line-height: 1.5;
-  font-size: 0.85em;
+  line-height: 1.4;
   overflow-y: hidden;
   overflow-x: auto;
 }
