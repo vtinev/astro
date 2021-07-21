@@ -31,8 +31,6 @@
   "files": [
     "components",
     "dist",
-    "snowpack-plugin-jsx.cjs",
-    "snowpack-plugin.cjs",
     "astro.mjs"
   ],
   "scripts": {
@@ -55,18 +53,16 @@
     "@babel/generator": "^7.13.9",
     "@babel/parser": "^7.13.15",
     "@babel/traverse": "^7.13.15",
-    "@snowpack/plugin-postcss": "^1.4.3",
-    "@snowpack/plugin-sass": "^1.4.0",
     "acorn": "^7.4.0",
+    "assert": "^2.0.0",
     "astring": "^1.7.4",
     "autoprefixer": "^10.2.5",
-    "camel-case": "^4.1.2",
     "babel-plugin-module-resolver": "^4.1.0",
+    "camel-case": "^4.1.2",
     "cheerio": "^1.0.0-rc.6",
     "ci-info": "^3.2.0",
     "del": "^6.0.0",
     "es-module-lexer": "^0.4.1",
-    "esbuild": "^0.12.12",
     "estree-util-value-to-estree": "^1.2.0",
     "estree-walker": "^3.0.0",
     "fast-xml-parser": "^3.19.0",
@@ -91,10 +87,10 @@
     "semver": "^7.3.5",
     "shorthash": "^0.0.2",
     "slash": "^4.0.0",
-    "snowpack": "^3.8.3",
     "string-width": "^5.0.0",
     "tiny-glob": "^0.2.8",
     "unified": "^9.2.1",
+    "vite": "^2.4.3",
     "yargs-parser": "^20.2.7"
   },
   "devDependencies": {

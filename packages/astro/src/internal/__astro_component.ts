@@ -1,4 +1,5 @@
 import type { Renderer, AstroComponentMetadata } from '../@types/astro';
+
 import hash from 'shorthash';
 import { valueToEstree, Value } from 'estree-util-value-to-estree';
 import { generate } from 'astring';
@@ -22,11 +23,7 @@ const astroHtmlRendererInstance: RendererInstance = {
   hydrationPolyfills: [],
 };
 
-let rendererInstances: RendererInstance[] = [];
-
-export function setRenderers(_rendererInstances: RendererInstance[]) {
-  rendererInstances = ([] as RendererInstance[]).concat(_rendererInstances);
-}
+declare let rendererInstances: RendererInstance[];
 
 function isCustomElementTag(name: string | Function) {
   return typeof name === 'string' && /-/.test(name);

@@ -7,7 +7,7 @@ import rehypeExpressions from './rehype-expressions.js';
 import { rehypeCodeBlock } from './codeblock.js';
 import { loadPlugins } from './load-plugins.js';
 import raw from 'rehype-raw';
-
+import matter from './gray-matter/index.js';
 import unified from 'unified';
 import markdown from 'remark-parse';
 import markdownToHtml from 'remark-rehype';
@@ -18,9 +18,7 @@ export { AstroMarkdownOptions, MarkdownRenderingOptions };
 
 /** Internal utility for rendering a full markdown file and extracting Frontmatter data */
 export async function renderMarkdownWithFrontmatter(contents: string, opts?: MarkdownRenderingOptions | null) {
-  // Dynamic import to ensure that "gray-matter" isn't built by Snowpack
-  const { default: matter } = await import('gray-matter');
-  const { data: frontmatter, content } = matter(contents);
+  const { data: frontmatter, content } = (matter as any)(contents);
   const value = await renderMarkdown(content, opts);
   return { ...value, frontmatter };
 }

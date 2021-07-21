@@ -33,7 +33,7 @@ Please upgrade to one of Node.js ${engines}.\n`);
     process.exit(1);
   }
 
-  await import('./dist/cli.js').then(({ cli }) => cli(process.argv));
+  await import('./dist/cli/index.js').then(({ cli }) => cli(process.argv));
 }
 
 main();

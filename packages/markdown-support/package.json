@@ -14,6 +14,7 @@
   "scripts": {
     "prepublish": "yarn build",
     "build": "astro-scripts build \"src/**/*.ts\" && tsc -p tsconfig.json",
+    "postbuild": "astro-scripts copy \"src/gray-matter/**/*.js\"",
     "dev": "astro-scripts dev \"src/**/*.ts\""
   },
   "dependencies": {

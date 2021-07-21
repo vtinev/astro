@@ -1,5 +1,6 @@
 import type { ImportSpecifier, ImportDefaultSpecifier, ImportNamespaceSpecifier } from '@babel/types';
 import type { AstroMarkdownOptions } from '@astrojs/markdown-support';
+import type { LogOptions } from '../logger';
 
 export interface AstroConfigRaw {
   dist: string;
@@ -192,4 +193,12 @@ export interface Renderer {
   renderToStaticMarkup: AsyncRendererComponentFn<{
     html: string;
   }>;
+}
+
+export interface BuildOptions {
+  logging: LogOptions;
+}
+
+export interface DevOptions {
+  logging: LogOptions;
 }

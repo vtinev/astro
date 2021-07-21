@@ -19,9 +19,11 @@ import { renderMarkdown } from '@astrojs/markdown-support';
 import { camelCase } from 'camel-case';
 import { transform } from '../transform/index.js';
 import { PRISM_IMPORT } from '../transform/prism.js';
-import { nodeBuiltinsSet } from '../../node_builtins.js';
 import { readFileSync } from 'fs';
 import { pathToFileURL } from 'url';
+import { builtinModules } from 'module';
+
+const nodeBuiltinsSet = new Set(builtinModules);
 
 const { parse, FEATURE_CUSTOM_ELEMENT } = astroParser;
 const traverse: typeof babelTraverse.default = (babelTraverse.default as any).default;
@@ -167,11 +169,10 @@ function generateAttributes(attrs: Record<string, string>): string {
   return result + '}';
 }
 
+/** Return absolute component URL */
 function getComponentUrl(astroConfig: AstroConfig, url: string, parentUrl: string | URL) {
-  const componentExt = path.extname(url);
-  const ext = PlainExtensions.has(componentExt) ? '.js' : `${componentExt}.js`;
   const outUrl = new URL(url, parentUrl);
-  return '/_astro/' + outUrl.href.replace(astroConfig.projectRoot.href, '').replace(/\.[^.]+$/, ext);
+  return '/_astro/' + outUrl.href.replace(astroConfig.projectRoot.href, '');
 }
 
 interface GetComponentWrapperOptions {
@@ -180,10 +181,9 @@ interface GetComponentWrapperOptions {
   compileOptions: CompileOptions;
 }
 
-const PlainExtensions = new Set(['.js', '.jsx', '.ts', '.tsx']);
 /** Generate Astro-friendly component import */
 function getComponentWrapper(_name: string, hydration: HydrationAttributes, { url, importSpecifier }: ComponentInfo, opts: GetComponentWrapperOptions) {
-  const { astroConfig, filename } = opts;
+  const { astroConfig, compileOptions, filename } = opts;
 
   let name = _name;
   let method = hydration.method;
@@ -194,7 +194,6 @@ function getComponentWrapper(_name: string, hydration: HydrationAttributes, { ur
     name = legacyName;
     method = legacyMethod as HydrationAttributes['method'];
 
-    const { compileOptions, filename } = opts;
     const shortname = path.posix.relative(compileOptions.astroConfig.projectRoot.pathname, filename);
     warn(compileOptions.logging, shortname, yellow(`Deprecation warning: Partial hydration now uses a directive syntax. Please update to "<${name} client:${method} />"`));
   }
@@ -226,7 +225,7 @@ function getComponentWrapper(_name: string, hydration: HydrationAttributes, { ur
       }
     };
 
-    let metadata: string = '';
+    let metadata = '';
     if (method) {
       const componentUrl = getComponentUrl(astroConfig, url, pathToFileURL(filename));
       const componentExport = getComponentExport();
