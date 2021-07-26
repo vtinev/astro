@@ -1,6 +1,7 @@
 import type { ImportSpecifier, ImportDefaultSpecifier, ImportNamespaceSpecifier } from '@babel/types';
 import type { AstroMarkdownOptions } from '@astrojs/markdown-support';
 import type { LogOptions } from '../logger';
+import type { SourceDescription } from 'rollup';
 
 export interface AstroConfigRaw {
   dist: string;
@@ -61,7 +62,7 @@ export interface TransformResult {
   imports: string[];
   exports: string[];
   html: string;
-  css?: string;
+  css?: SourceDescription;
   /** If this page exports a collection, the JS to be executed as a string */
   createCollection?: string;
   hasCustomElements: boolean;
@@ -71,7 +72,7 @@ export interface TransformResult {
 export interface CompileResult {
   result: TransformResult;
   contents: string;
-  css?: string;
+  css?: SourceDescription;
 }
 
 export type RuntimeMode = 'development' | 'production';

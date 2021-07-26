@@ -10,6 +10,7 @@ import { ASTRO_RUNTIME_DEPS, CJS_MODULES, ES_MODULES } from '../ssr/modules.js';
 import ssr from '../ssr/index.js';
 import { buildURLMap } from '../ssr/util.js';
 import astroPlugin from '../ssr/vite_astro.js';
+import { getUserDeps } from '../util.js';
 
 interface DevServer {
   hostname: string;
@@ -48,7 +49,7 @@ export default async function dev(config: AstroConfig, options: DevOptions): Pro
     },
     ssr: {
       external: [...CJS_MODULES],
-      noExternal: [...ES_MODULES],
+      noExternal: [...ES_MODULES, ...(await getUserDeps(config.projectRoot))],
     },
   };
   const viteServer = await vite.createServer(viteConfig);

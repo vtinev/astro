@@ -1,10 +1,15 @@
 import type { CreateCollectionResult } from './@types/astro';
 
+import fs from 'fs';
+
+/** throw friendly error on collection setup */
 export function validateCollectionModule(mod: any, filename: string) {
   if (!mod.exports.createCollection) {
     throw new Error(`No "createCollection()" export found. Add one or remove the "$" from the filename. ("${filename}")`);
   }
 }
+
+/** throw friendly error on collection response */
 export function validateCollectionResult(result: CreateCollectionResult, filename: string) {
   const LEGACY_KEYS = new Set(['permalink', 'data', 'routes']);
   for (const key of Object.keys(result)) {
@@ -27,4 +32,17 @@ export function validateCollectionResult(result: CreateCollectionResult, filenam
   if (result.paginate && !result.route.includes(':page?')) {
     throw new Error(`[createCollection] when "paginate: true" route must include a "/:page?" param. (${filename})`);
   }
+}
+
+/** get user dependency list for Vite */
+export async function getUserDeps(projectRoot: URL): Promise<Set<string>> {
+  const possibleLocs = new Set(['./package.json']);
+  for (const possibleLoc of possibleLocs) {
+    const packageJSONLoc = new URL(possibleLoc, projectRoot);
+    if (fs.existsSync(packageJSONLoc)) {
+      const packageJSON = JSON.parse(await fs.promises.readFile(packageJSONLoc, 'utf8'));
+      return new Set<string>(Object.keys(packageJSON.dependencies || {}));
+    }
+  }
+  return new Set<string>();
 }

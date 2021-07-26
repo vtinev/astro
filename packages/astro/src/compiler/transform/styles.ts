@@ -1,5 +1,6 @@
-import type { TransformOptions, Transformer } from '../../@types/transformer';
 import type { TemplateNode } from '@astrojs/parser';
+import type { SourceDescription } from 'rollup';
+import type { TransformOptions, Transformer } from '../../@types/transformer';
 
 import crypto from 'crypto';
 import { createRequire } from 'module';
@@ -47,7 +48,7 @@ function hashFromFilename(filename: string): string {
 }
 
 export interface StyleTransformResult {
-  css: string;
+  css: SourceDescription;
   type: StyleType;
 }
 
@@ -102,6 +103,7 @@ async function transformStyle(code: string, { logging, type, filename, scopedCla
 
   // 1. Preprocess (currently only Sass supported)
   let css = '';
+  let map: string | undefined;
   switch (styleType) {
     case 'css': {
       css = code;
@@ -109,7 +111,9 @@ async function transformStyle(code: string, { logging, type, filename, scopedCla
     }
     case 'sass':
     case 'scss': {
-      css = sass.renderSync({ data: code, includePaths, indentedSyntax: styleType === 'sass' }).css.toString('utf8');
+      const sassResult = sass.renderSync({ data: code, includePaths, indentedSyntax: styleType === 'sass' });
+      css = sassResult.css.toString('utf8');
+      if (sassResult.map) map = sassResult.map.toString('utf8');
       break;
     }
     default: {
@@ -150,11 +154,20 @@ async function transformStyle(code: string, { logging, type, filename, scopedCla
   postcssPlugins.push(autoprefixer());
 
   // 2e. Run PostCSS
-  css = await postcss(postcssPlugins)
+  await postcss(postcssPlugins)
     .process(css, { from: filename, to: undefined })
-    .then((result) => result.css);
+    .then((result) => {
+      css = result.css;
+      if (result.map) map = result.map.toString(); // TODO: fix
+    });
 
-  return { css, type: styleType };
+  return {
+    css: {
+      code: css,
+      map,
+    },
+    type: styleType,
+  };
 }
 
 /** For a given node, inject or append a `scopedClass` to its `class` attribute */
@@ -283,9 +296,9 @@ export default function transformStyles({ compileOptions, filename, fileID }: Tr
           const isHeadStyle = !styleNodes[n].content;
           if (isHeadStyle) {
             // Note: <style> tags in <head> have different attributes/rules, because of the parser. Unknown why
-            (styleNodes[n].children as any) = [{ ...(styleNodes[n].children as any)[0], data: result.css }];
+            (styleNodes[n].children as any) = [{ ...(styleNodes[n].children as any)[0], data: result.css.code }];
           } else {
-            styleNodes[n].content.styles = result.css;
+            styleNodes[n].content.styles = result.css.code;
           }
 
           // 2. Update <style> attributes

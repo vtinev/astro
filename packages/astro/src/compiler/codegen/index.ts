@@ -1,4 +1,5 @@
 import type { Ast, Script, Style, TemplateNode, Expression } from '@astrojs/parser';
+import type { SourceDescription } from 'rollup';
 import type { CompileOptions } from '../../@types/compiler';
 import type { AstroConfig, AstroMarkdownOptions, TransformResult, ComponentInfo, Components } from '../../@types/astro';
 import type { ImportDeclaration, ExportNamedDeclaration, VariableDeclarator, Identifier, ImportDefaultSpecifier } from '@babel/types';
@@ -312,7 +313,7 @@ interface CompileResult {
 
 interface CodegenState {
   components: Components;
-  css: string[];
+  css: SourceDescription[];
   filename: string;
   fileID: string;
   markers: {
@@ -498,7 +499,7 @@ function compileCss(style: Style, state: CodegenState) {
   walk(style, {
     enter(node: TemplateNode) {
       if (node.type === 'Style') {
-        state.css.push(node.content.styles); // if multiple <style> tags, combine together
+        state.css.push({ code: node.content.styles }); // if multiple <style> tags, combine together
         this.skip();
       }
     },
@@ -855,6 +856,25 @@ async function compileHtml(enterNode: TemplateNode, state: CodegenState, compile
   });
 }
 
+/** Combine multiple CSS sources together */
+function combineCSS(css: SourceDescription[]): SourceDescription {
+  let code = '';
+  let map: string | undefined;
+
+  for (const cssNode of css) {
+    if (cssNode.code) code += '\n\n' + cssNode.code;
+    if (cssNode.map) {
+      if (!map) map = '';
+      map += '\n\n' + cssNode.map.toString(); // TODO: fix combining CSS sourcemaps
+    }
+  }
+
+  return {
+    code,
+    map,
+  };
+}
+
 /**
  * Codegen
  * Step 3/3 in Astro SSR.
@@ -891,7 +911,7 @@ export async function codegen(ast: Ast, { compileOptions, filename, fileID }: Co
     imports: Array.from(state.importStatements),
     exports: Array.from(state.exportStatements),
     html,
-    css: state.css.length ? state.css.join('\n\n') : undefined,
+    css: combineCSS(state.css),
     createCollection,
     hasCustomElements: Boolean(ast.meta.features & FEATURE_CUSTOM_ELEMENT),
     customElementCandidates: state.customElementCandidates,
