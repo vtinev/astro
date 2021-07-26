@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './Counter.css';
 
 export default function Counter({ children, count: initialCount }) {
   const [count, setCount] = useState(initialCount);

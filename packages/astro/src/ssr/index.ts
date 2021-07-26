@@ -28,6 +28,19 @@ export default async function ssr({ logging, reqURL, urlMap, origin, viteServer 
     pageProps = collectionResult.pageProps;
   }
 
+  const modMeta = await viteServer.moduleGraph.getModuleByUrl(fileURLToPath(modURL));
+  const deepImports = new Set<string>();
+  async function collectDeepImports(modUrl: string) {
+    if (deepImports.has(modUrl)) {
+      return;
+    }
+    deepImports.add(modUrl);
+    const depMeta = await viteServer.moduleGraph.getModuleByUrl(modUrl);
+    depMeta?.ssrTransformResult?.deps?.forEach(collectDeepImports);
+  }
+  await Promise.all(modMeta?.ssrTransformResult?.deps?.map(collectDeepImports) || []);
+  const deepCssImports = [...deepImports].filter(d => d.endsWith('.css'));
+
   // SSR HTML
   let html = await mod.__renderPage({
     request: {
@@ -43,7 +56,10 @@ export default async function ssr({ logging, reqURL, urlMap, origin, viteServer 
   // inject Vite client
   // note: vite.transformIndexHtml(…) will strip hydration scripts
   html = html.replace(/<head>/, `<head><script type="module" src="/@vite/client"></script>`);
-
+  // inject deeply collected CSS
+  for (const deepCssImport of deepCssImports) {
+    html = html.replace(/<\/head>/, `<script type="module" src="${deepCssImport}"></script></head>`);
+  }
   // finish
   return html;
 }
