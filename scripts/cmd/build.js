@@ -42,18 +42,19 @@ export default async function build(...args) {
     return;
   }
 
+  const dt = new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: '3' });
+
   const builder = await esbuild.build({
     ...config,
     watch: {
       onRebuild(error, result) {
-        const date = new Date().toISOString();
         if (error || (result && result.errors.length)) {
-          console.error(dim(`[${date}] `) + red(error || result.errors.join('\n')));
+          console.error(dim(dt.format(new Date())) + ' ' + red(error || result.errors.join('\n')));
         } else {
           if (result.warnings.length) {
-            console.log(dim(`[${date}] `) + yellow('⚠ updated with warnings:\n' + result.warnings.join('\n')));
+            console.log(dim(dt.format(new Date())) + ' ' + yellow('⚠ updated with warnings:\n' + result.warnings.join('\n')));
           }
-          console.log(dim(`[${date}] `) + green('✔ updated'));
+          console.log(dim(dt.format(new Date())) + ' ' + green('✔ updated'));
         }
       },
     },

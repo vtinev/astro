@@ -117,6 +117,7 @@ export async function cli(args: string[]) {
         console.error(colors.red(err.toString() || err));
         process.exit(1);
       }
+      break;
     }
     case 'build': {
       try {

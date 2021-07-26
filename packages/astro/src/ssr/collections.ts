@@ -123,7 +123,7 @@ export default async function loadCollection(
 
 /** Friendly error message before loading collection data */
 export function validateCollectionModule(mod: any, filename: string) {
-  if (!mod.exports.createCollection) {
+  if (!mod.createCollection) {
     throw new Error(`No "createCollection()" export found. Add one or remove the "$" from the filename. ("${filename}")`);
   }
 }

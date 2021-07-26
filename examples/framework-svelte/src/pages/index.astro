@@ -15,7 +15,7 @@ import Counter from '../components/Counter.svelte'
     />
     <style>
       :global(:root) {
-        font-family: system-ui;
+        font-family: -system-ui, -apple-system, sans-serif;
         padding: 2em 0;
       }
       :global(.counter) {
@@ -23,17 +23,18 @@ import Counter from '../components/Counter.svelte'
         grid-template-columns: repeat(3, minmax(0, 1fr));
         place-items: center;
         font-size: 2em;
-        margin-top: 2em;
       }
       :global(.children) {
         display: grid;
         place-items: center;
-        margin-bottom: 2em;
+      }
+      .wrapper {
+        padding-top: 1.5rem;
       }
     </style>
   </head>
   <body>
-    <main>
+    <main class="wrapper">
       <Counter client:visible>
         <h1>Hello Svelte!</h1>
       </Counter>

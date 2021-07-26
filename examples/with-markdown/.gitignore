@@ -1,4 +1,5 @@
 # build output
+.astro-cache
 dist
 
 # dependencies

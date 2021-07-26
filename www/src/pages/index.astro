@@ -16,12 +16,12 @@ let lang = 'en';
 <html lang={ lang ?? 'en' }>
   <head>
     <BaseHead title={title} description={description} permalink={permalink} />
-    <link rel="stylesheet" href="/global.css" />
+    <link rel="stylesheet" href="../styles/global.scss" />
   </head>
 
   <body>
     <Space />
-    
+
     <Main>
       <MainHeader />
       <Article>
@@ -35,7 +35,7 @@ let lang = 'en';
         <p>
           For a technology built on top of three different languages, the modern web seems to focus an awful lot on JavaScript. We don&rsquo;t think it has to&mdash;and that&rsquo;s certainly <a href="https://css-tricks.com/the-great-divide/">not</a>&nbsp;<a href="https://bradfrost.com/blog/post/front-of-the-front-end-and-back-of-the-front-end-web-development/">a</a>&nbsp;<a href="https://macwright.com/2020/05/10/spa-fatigue.html">revolutionary</a>&nbsp;<a href="https://css-tricks.com/whats-old-is-new/">concept</a>.
         </p>
-        
+
         <p>
           We&rsquo;ll eagerly jump at the chance to sing JavaScript&rsquo;s praises, but HTML and CSS are pretty great too. There aren&rsquo;t enough modern tools which reflect that, which is why we're building Astro.
         </p>

@@ -17,12 +17,12 @@ export interface URLMap {
   collections: Map<string, URL>;
 }
 
-/** Generate Map of url -> Astro page */
-export async function buildURLMap(root: URL): Promise<URLMap> {
+/** Generate map of urls -> resolved .astro files (note: keeping this sync will help with watchers) */
+export function buildURLMap(root: URL): URLMap {
   const urlMap: URLMap = { staticPages: new Map<string, URL>(), collections: new Map<string, URL>() };
 
   // scan dir (must be re-scanned on every file change)
-  const files = (await new fdir().glob('**/*.(astro|md)').withBasePath().crawl(fileURLToPath(root)).withPromise()) as string[];
+  const files = new fdir().glob('**/*.(astro|md)').withBasePath().crawl(fileURLToPath(root)).sync() as string[];
 
   // for each file…
   for (const file of files) {

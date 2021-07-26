@@ -41,7 +41,7 @@ export function toBuffer(input) {
  */
 
 export function toString(input) {
-  if (exports.isBuffer(input)) return stripBom(String(input));
+  if (isBuffer(input)) return stripBom(String(input));
   if (typeof input !== 'string') {
     throw new TypeError('expected input to be a string or buffer');
   }

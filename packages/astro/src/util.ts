@@ -4,7 +4,7 @@ import fs from 'fs';
 
 /** throw friendly error on collection setup */
 export function validateCollectionModule(mod: any, filename: string) {
-  if (!mod.exports.createCollection) {
+  if (!mod.createCollection) {
     throw new Error(`No "createCollection()" export found. Add one or remove the "$" from the filename. ("${filename}")`);
   }
 }

@@ -44,7 +44,7 @@ export default function ({ compileOptions, filename }: { compileOptions: Compile
             }
 
             const srcUrl = new URL(src, fileUrl);
-            const absoluteUrl = `/_astro/${srcUrl.href.replace(astroConfig.projectRoot.href, '')}`;
+            const absoluteUrl = srcUrl.href.replace(astroConfig.projectRoot.href, '/');
             setAttrValue(node.attributes, 'src', absoluteUrl);
           },
         },

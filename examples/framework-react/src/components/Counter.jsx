@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './Counter.css';
+import Style from './Counter.module.css';
 
 export default function Counter({ children, count: initialCount }) {
   const [count, setCount] = useState(initialCount);
@@ -8,12 +8,12 @@ export default function Counter({ children, count: initialCount }) {
 
   return (
     <>
-      <div className="counter">
+      <div className={Style.counter}>
         <button onClick={subtract}>-</button>
         <pre>{count}</pre>
         <button onClick={add}>+</button>
       </div>
-      <div className="children">{children}</div>
+      <div className={Style.children}>{children}</div>
     </>
   );
 }

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "astro dev",
-    "build": "astro build"
+    "build": "echo \"www build\""
   },
   "devDependencies": {
     "astro": "^0.18.8"

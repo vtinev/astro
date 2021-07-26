@@ -17,6 +17,8 @@
     "./snowpack-plugin-jsx": "./snowpack-plugin-jsx.cjs",
     "./components": "./components/index.js",
     "./components/*": "./components/*",
+    "./frontend/*": "./dist/frontend/*",
+    "./frontend/hydrate/*": "./dist/frontend/hydrate/*",
     "./runtime/svelte": "./dist/frontend/runtime/svelte.js",
     "./internal/*": "./dist/internal/*",
     "./dist/internal/*": "./dist/internal/*"
@@ -53,6 +55,8 @@
     "@babel/generator": "^7.13.9",
     "@babel/parser": "^7.13.15",
     "@babel/traverse": "^7.13.15",
+    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.15",
+    "@vitejs/plugin-vue": "^1.3.0",
     "acorn": "^7.4.0",
     "assert": "^2.0.0",
     "astring": "^1.7.4",
@@ -61,6 +65,7 @@
     "camel-case": "^4.1.2",
     "cheerio": "^1.0.0-rc.6",
     "ci-info": "^3.2.0",
+    "deepmerge": "^4.2.2",
     "del": "^6.0.0",
     "es-module-lexer": "^0.4.1",
     "estree-util-value-to-estree": "^1.2.0",
@@ -90,7 +95,7 @@
     "string-width": "^5.0.0",
     "tiny-glob": "^0.2.8",
     "unified": "^9.2.1",
-    "vite": "^2.4.3",
+    "vite": "^2.4.4",
     "yargs-parser": "^20.2.7"
   },
   "devDependencies": {

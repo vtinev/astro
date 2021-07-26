@@ -173,7 +173,7 @@ function generateAttributes(attrs: Record<string, string>): string {
 /** Return absolute component URL */
 function getComponentUrl(astroConfig: AstroConfig, url: string, parentUrl: string | URL) {
   const outUrl = new URL(url, parentUrl);
-  return '/_astro/' + outUrl.href.replace(astroConfig.projectRoot.href, '');
+  return outUrl.href.replace(astroConfig.projectRoot.href, '/');
 }
 
 interface GetComponentWrapperOptions {
@@ -204,8 +204,8 @@ function getComponentWrapper(_name: string, hydration: HydrationAttributes, { ur
     return {
       wrapper: `__astro_component(...__astro_element_registry.astroComponentArgs("${name}", ${JSON.stringify({ hydrate: method, displayName: _name })}))`,
       wrapperImports: [
-        `import {AstroElementRegistry} from 'astro/dist/internal/element-registry.js';`,
-        `import {__astro_component} from 'astro/dist/internal/__astro_component.js';`,
+        `import { AstroElementRegistry } from 'astro/dist/internal/element-registry.js';`,
+        `import { __astro_component } from 'astro/dist/internal/__astro_component.js';`,
       ],
     };
   } else {
