@@ -3,55 +3,38 @@ import { h, Fragment } from 'preact';
 import { useState, useEffect, useRef, StateUpdater } from 'preact/hooks';
 
 // provided by https://www.emgoto.com/react-table-of-contents/
-const useIntersectionObserver = (setActiveId: StateUpdater<string>) => {
-  const headingElementsRef = useRef({});
+const useIntersectionObserver = (setActiveHeadings: StateUpdater<string[]>) => {
   useEffect(() => {
     const callback: IntersectionObserverCallback = (
-      headings: IntersectionObserverEntry[]
+      sections: IntersectionObserverEntry[]
     ) => {
-      headingElementsRef.current = headings.reduce((map, headingElement) => {
-        map[headingElement.target.id] = headingElement;
-        return map;
-      }, headingElementsRef.current);
-
-      const visibleHeadings = [];
-      Object.keys(headingElementsRef.current).forEach((key) => {
-        const headingElement = headingElementsRef.current[key];
-        if (headingElement.isIntersecting) visibleHeadings.push(headingElement);
-      });
-
-      const getIndexFromId = (id) =>
-        headingElements.findIndex((heading) => heading.id === id);
-
-      if (visibleHeadings.length === 1) {
-        setActiveId(visibleHeadings[0].target.id);
-      } else if (visibleHeadings.length > 1) {
-        const sortedVisibleHeadings = visibleHeadings.sort(
-          (a, b) => getIndexFromId(a.target.id) - getIndexFromId(b.target.id)
-        );
-        setActiveId(sortedVisibleHeadings[0].target.id);
-      }
+      setActiveHeadings(
+        sections
+          .filter((section) => section.intersectionRatio > 0)
+          .map((section) => section.target.children[0].getAttribute('id'))
+      );
     };
 
-    const observer = new IntersectionObserver(callback, {
-      rootMargin: '0px 0px -40% 0px',
-    });
+    const observer = new IntersectionObserver(callback);
 
     const headingElements = Array.from(
-      document.querySelectorAll('article :is(h1, h2, h3)')
+      document.querySelectorAll('article.content section')
     );
 
-    headingElements.forEach((element) => observer.observe(element));
+    // Have the observer watch each `<section/>` that has a heading in it
+    headingElements.forEach((element) => {
+      observer.observe(element);
+    });
 
     return () => observer.disconnect();
-  }, [setActiveId]);
+  }, [setActiveHeadings]);
 };
 
 const TableOfContents: FunctionalComponent<{ headers: any[] }> = ({
   headers = [],
 }) => {
-  const [activeId, setActiveId] = useState<string>(undefined);
-  useIntersectionObserver(setActiveId);
+  const [activeHeadings, setActiveHeadings] = useState<string[]>([]);
+  useIntersectionObserver(setActiveHeadings);
 
   return (
     <>
@@ -59,7 +42,7 @@ const TableOfContents: FunctionalComponent<{ headers: any[] }> = ({
       <ul>
         <li
           class={`header-link depth-2 ${
-            activeId === 'overview' ? 'active' : ''
+            activeHeadings.includes('overview') ? 'active' : ''
           }`.trim()}
         >
           <a href="#overview">Overview</a>
@@ -68,8 +51,9 @@ const TableOfContents: FunctionalComponent<{ headers: any[] }> = ({
           .filter(({ depth }) => depth > 1 && depth < 4)
           .map((header) => (
             <li
+              key={header.slug}
               class={`header-link depth-${header.depth} ${
-                activeId === header.slug ? 'active' : ''
+                activeHeadings.includes(header.slug) ? 'active' : ''
               }`.trim()}
             >
               <a href={`#${header.slug}`}>{header.text}</a>
